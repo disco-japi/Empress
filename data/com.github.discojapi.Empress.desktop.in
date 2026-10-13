@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Empress
+Exec=empress
+Icon=com.github.discojapi.Empress
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=GTK;
+StartupNotify=true
+DBusActivatable=true

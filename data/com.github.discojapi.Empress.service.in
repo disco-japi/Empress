@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.github.discojapi.Empress
+Exec=@bindir@/empress --gapplication-service
