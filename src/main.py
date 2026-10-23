@@ -55,12 +55,12 @@ class EmpressApplication(Adw.Application):
         """Callback for the app.about action."""
         about = Adw.AboutDialog(application_name='Empress',
                                 application_icon='com.github.discojapi.Empress',
-                                developer_name='Sebastian',
+                                developer_name='DiscoJapi',
                                 version='0.1.0',
                                 # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
                                 translator_credits = _('translator-credits'),
-                                developers=['Sebastian'],
-                                copyright='© 2026 Sebastian')
+                                developers=['DiscoJapi'],
+                                copyright='© 2026 DiscoJapi')
         about.present(self.props.active_window)
 
     def on_preferences_action(self, widget, _):
