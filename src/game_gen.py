@@ -1,10 +1,7 @@
-class Queen:
-    x = 0
-    def __init__(self, x):
-        self.x = x
+import random
 
 #N-Queens-Puzzle
-N = 8 #N >= 4
+N = 5 #N >= 4
 valid_sets = []
 
 
@@ -12,27 +9,24 @@ def checkSet(set):
     check = []
     prev = N+2
     for i in set:
-        if abs(prev-i.x) <= 1:
+        if abs(prev-i) <= 1 or i > N-1:
             return False
-        if i.x not in check:
-            check.append(i.x)
+        if i not in check:
+            check.append(i)
         else:
             return False
-        prev = i.x
+        prev = i
     return True
 
-
-
-
 def printSet(set):
-    pos = [None]*len(set)
+    pos = [None]*N
     n = 0
     for i in set:
         temp = ""
-        for j in range(i.x):
+        for j in range(i):
             temp= temp+ "x"
         temp = temp + "o"
-        for j in range(N-i.x-1):
+        for j in range(N-i-1):
             temp = temp +  "x"
         pos[n] = temp
         n+= 1
@@ -41,24 +35,85 @@ def printSet(set):
     print("")
     
 
+def Calc(n, set, fr): # n: y recorrido, fr: first-run, enfoque Bottom-Up recursivo
+    _fr = fr
+    if not _fr:
+        set[n] = 0
+    for i in range(0, N):
+        if n < N-1:
+            Calc(n+1, set, _fr)
+        _fr = False
+        if checkSet(set):
+            return
+        if(i is not N-1):
+            set[n] += 1
+
+#Game-gen
+seed = random.randint(0,N ** N)
+
 queens = []
 for i in range(N):
-    queens.append(Queen(0))
+    queens.append(seed % N)
+    if seed > 0:
+        seed = int(seed / N)
 
-def Calc(n, set): # n: y recorrido, enfoque Bottom-Up recursivo
-    if n == N:
-        return
-    set[n].x = 0
-    for i in range(0, N):
-        Calc(n+1, set)
-        if checkSet(set):
-            printSet(set)
-        if(i is not N-1):
-            set[n].x += 1
+Calc(0, queens, True)
+if not checkSet(queens):
+    Calc(0, queens, False)
 
-Calc(0, queens)
+#Color-Flooding
+def SetGen(set):
+    gameset = []
+    n = 0
+    for i in set:
+        gameset.append([])
+        for j in range(i):
+            gameset[n].append(0)
+        gameset[n].append(n+1)
+        for j in range(N-i-1):
+            gameset[n].append(0)
+        n+= 1
+    return gameset
 
-#for i in valid_sets:
- #   printSet(i)
+gameset = SetGen(queens)
+for i in gameset:
+    print(i)
+
+def PaintAdj(set, x, y): # Randomly paints adjacent tile 
+    q = set[y][x] # q: queen
+    painted = False
+    att = 0
+    while att < 4 or painted == False:
+        dir = random.randint(0,3) # 0: up, 1, right, 2, down, 3, left
+        if dir == 0:
+            if y > 0:
+                if set[x, y-1] == 0:
+                    set[x, y-1] = q
+                    painted = True
+        elif dir == 1:
+            if x < N-1:
+                if set[x+1, y] == 0:
+                    set[x+1, y] = q
+                    painted = True
+        elif dir == 2:
+            if x < N-1:
+                if set[x, y+1] == 0:
+                    set[x, y+1] = q
+                    painted = True
+        elif dir == 3:
+            if x > 0:
+                if set[x-1, y] == 0:
+                    set[x-1, y] = q
+                    painted = True
+        att += 1
+        return painted
     
-print(len(valid_sets))
+def PaintSet(gameset):
+    _gameset = gameset
+    while True:
+        for i in range(N):
+            pass
+        break
+    return _gameset
+
+painted_set = PaintSet
