@@ -1,7 +1,7 @@
 import random
 
 #N-Queens-Puzzle
-N = 8 #N >= 4
+N = 9 #N >= 4
 
 def checkSet(set):
     check = []
@@ -34,15 +34,14 @@ def printSet(set):
     
 
 def Calc(n, set, fr): # n: y recorrido, fr: first-run, enfoque Bottom-Up recursivo
-    _fr = fr
-    if not _fr:
+    if not fr:
         set[n] = 0
     for i in range(0, N):
-        if n < N-1:
-            Calc(n+1, set, _fr)
-        _fr = False
+        if n < N-1 and Calc(n+1, set, fr):
+            return True
+        fr = False
         if checkSet(set):
-            return
+            return True
         if(i is not N-1):
             set[n] += 1
 
@@ -50,13 +49,13 @@ def Calc(n, set, fr): # n: y recorrido, fr: first-run, enfoque Bottom-Up recursi
 seed = random.randint(0,N ** N)
 
 queens = []
+
 for i in range(N):
     queens.append(seed % N)
     if seed > 0:
         seed = int(seed / N)
 
-Calc(0, queens, True)
-if not checkSet(queens):
+if not Calc(0, queens, True):
     Calc(0, queens, False)
 
 #Color-Flooding
@@ -74,8 +73,6 @@ def SetGen(set):
     return gameset
 
 gameset = SetGen(queens)
-for i in gameset:
-    print(i)
 
 def PaintAdj(set, x, y): # Randomly paints adjacent tile 
     q = set[y][x] # q: queen
@@ -83,73 +80,57 @@ def PaintAdj(set, x, y): # Randomly paints adjacent tile
     att = 0
     while att < 4 or painted == False:
         dir = random.randint(0,3) # 0: up, 1, right, 2, down, 3, left
-        if dir == 0:
-            if y > 0:
-                if set[y-1][x] == 0:
-                    set[y-1][x] = q
-                    painted = True
-                    y-= 1
-        elif dir == 1:
-            if x < N-1:
-                if set[y][x+1] == 0:
-                    set[y][x+1]= q
-                    painted = True
-                    x+= 1
-        elif dir == 2:
-            if y < N-1:
-                if set[y+1][x] == 0:
-                    set[y+1][x] = q
-                    painted = True
-                    y+=1
-        elif dir == 3:
-            if x > 0:
-                if set[y][x-1] == 0:
-                    set[y][x-1] = q
-                    painted = True
-                    x-= 1
+        if dir == 0 and y > 0 and set[y-1][x] == 0:
+            set[y-1][x] = q
+            painted = True
+            y-= 1
+        elif dir == 1 and x < N-1 and set[y][x+1] == 0:
+            set[y][x+1]= q
+            painted = True
+            x+= 1
+        elif dir == 2 and y < N-1 and set[y+1][x] == 0:
+            set[y+1][x] = q
+            painted = True
+            y+=1
+        elif dir == 3 and  x > 0 and set[y][x-1] == 0:
+            set[y][x-1] = q
+            painted = True
+            x-= 1
         att += 1
-        return (painted, set, x, y)
+        return (painted, x, y)
 
 def SpreadPaint(set, x, y, q, d, c): # q: queen; d: direction = 0: up, 1, right, 2, down, 3, left; c: counter
-    _q = q
     c+= 1
     if set[y][x] == 0:
-        set[y][x] = _q
+        set[y][x] = q
     else:
-        _q = set[y][x]
+        q = set[y][x]
     if c<=2*N:
         if y > 0 and d != 0:
-            SpreadPaint(set, x,y-1, _q,2,c)
+            SpreadPaint(set, x,y-1, q,2,c)
         if x < N-1 and d != 3:
-            SpreadPaint(set, x+1,y, _q,1,c)
+            SpreadPaint(set, x+1,y, q,1,c)
         if y < N-1 and d != 2:
-            SpreadPaint(set, x,y+1, _q,0,c)
+            SpreadPaint(set, x,y+1, q,0,c)
         if x > 0 and d != 1:
-            SpreadPaint(set, x-1,y, _q,3,c)
+            SpreadPaint(set, x-1,y, q,3,c)
     
 def PaintSet(gameset):
-    _gameset = gameset
     pointers = []
     for i in range(N):
         pointers.append([(queens[i], i)])
     for j in range(N):
         for i in range(N):
             x, y = pointers[i][random.randint(0,len(pointers[i])-1)]
-            painted, _gameset, x, y = PaintAdj(gameset, x, y)
+            painted, x, y = PaintAdj(gameset, x, y)
             if painted:
                 pointers[i].append((x, y))
-    
-    for i in _gameset:
-        print(i)
-    print("")
     for i in range(N):
-        if _gameset[i] != 0:
-            SpreadPaint(_gameset, i, 0, _gameset[0][i],2,0)
+        if gameset[i] != 0:
+            SpreadPaint(gameset, i, 0, gameset[0][i],2,0)
             break
-    return _gameset
 
-painted_set = PaintSet(gameset)
-print("")
+PaintSet(gameset)
 
-for i in painted_set:
+for i in gameset:
     print(i)
