@@ -1,7 +1,7 @@
 import random
 
 #N-Queens-Puzzle
-N = 9 #N >= 4
+N = 8 #N >= 4
 
 def checkSet(set):
     check = []
@@ -99,21 +99,18 @@ def PaintAdj(set, x, y): # Randomly paints adjacent tile
         att += 1
         return (painted, x, y)
 
-def SpreadPaint(set, x, y, q, d, c): # q: queen; d: direction = 0: up, 1, right, 2, down, 3, left; c: counter
-    c+= 1
+def SpreadPaint(set, x, y, q, d): # q: queen; d: direction = 0: up, 1, right, 2, down, 3, left; c: counter
     if set[y][x] == 0:
         set[y][x] = q
     else:
         q = set[y][x]
-    if c<=2*N:
-        if y > 0 and d != 0:
-            SpreadPaint(set, x,y-1, q,2,c)
-        if x < N-1 and d != 3:
-            SpreadPaint(set, x+1,y, q,1,c)
-        if y < N-1 and d != 2:
-            SpreadPaint(set, x,y+1, q,0,c)
-        if x > 0 and d != 1:
-            SpreadPaint(set, x-1,y, q,3,c)
+    if x < N-1 and (d == 1 or d == 2):
+        SpreadPaint(set, x+1,y, q,1)
+    if d == 2 and y < N-1:
+            SpreadPaint(set, x,y+1, q,2)
+    if x > 0 and (d == 3 or d == 2):
+        SpreadPaint(set, x-1,y, q,3)
+
     
 def PaintSet(gameset):
     pointers = []
@@ -126,11 +123,10 @@ def PaintSet(gameset):
             if painted:
                 pointers[i].append((x, y))
     for i in range(N):
-        if gameset[i] != 0:
-            SpreadPaint(gameset, i, 0, gameset[0][i],2,0)
+        if gameset[0][i] != 0:
+            SpreadPaint(gameset, i, 0, gameset[0][i],2)
             break
 
 PaintSet(gameset)
-
 for i in gameset:
     print(i)

@@ -24,9 +24,11 @@ from gettext import gettext as _
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
+#gi.require_version('GooCanvas', '3.0')
 
 from gi.repository import Gtk, Gio, Adw
-from .window import EmpressWindow
+from gi.repository import GooCanvas
+#from .window import EmpressWindow
 
 
 class EmpressApplication(Adw.Application):
